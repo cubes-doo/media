@@ -18,5 +18,7 @@
         "psr-4": {
             "Cubes\\Media\\": "src/"
         }
-    }
+    },
+    "keywords": ["youtube-api", "youtube php", "composer", "vimeo php", "vimeo-php"],
+    "homepage": "https://github.com/cubes-doo/media"
 }
