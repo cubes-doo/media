@@ -1,0 +1,22 @@
+{
+    "name": "cubes-doo/media",
+    "description": "Media library for interaction with Youtube and Vimeo web media Api's.",
+    "type": "library",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Djordje Stojiljkovic",
+            "email": "djordje.stojiljkovic@cubes.rs"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "vimeo/vimeo-api": "*",
+        "google/apiclient": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cubes\\Media\\": "src/"
+        }
+    }
+}
