@@ -5,7 +5,7 @@ namespace Cubes\Media\Tests;
 use Cubes\Media\Factory;
 use Cubes\Media\FactoryInterface;
 use Cubes\Media\Providers\ProviderInterface;
-use Cubes\Media\Tests\Stub\ResolverStub;
+use Cubes\Media\Tests\Stubs\ResolverStub;
 
 class FactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,6 +14,11 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      */
     private $factory;
 
+    /**
+     * TODO: Change name of property because is ugly and impractical for parameters accessing.
+     *
+     * @var array
+     */
     private $collection = [];
 
     public function setUp()
@@ -39,10 +44,9 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFactoryCreateThrowsExceptionWhenResolverNotImplementedRequiredInterface()
+    public function testFactoryCreateThrowsExceptionWhenResolverNotImplementedRequiredMethod()
     {
         $this->expectException(\Exception::class);
-
         $this->factory->registerResolver(ResolverStub::class)->create(
             $this->collection['url'], $this->collection['config']
         );
@@ -55,9 +59,16 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testResolverIsRegistered()
     {
-        $resolverClass = 'Random\\Class\\Name';
-        $factory = $this->factory->registerResolver($resolverClass);
+        $factory = $this->factory->registerResolver(ResolverStub::class);
+        $this->assertTrue(in_array(ResolverStub::class, $factory->getResolvers()));
+    }
 
-        $this->assertTrue(in_array($resolverClass, $factory->getResolvers()));
+    public function testResolverIsRegisteredAsTheOnlyOne()
+    {
+        $factory = $this->factory->setResolver(ResolverStub::class);
+        $this->assertTrue(
+            in_array(ResolverStub::class, $factory->getResolvers()) &&
+            count($factory->getResolvers()) === 1
+        );
     }
 }

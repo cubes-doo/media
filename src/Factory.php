@@ -69,20 +69,21 @@ class Factory implements FactoryInterface
         // Iterate through all resolvers in reverse order
         // and try to resolve Provider class.
         foreach ($this->getResolvers() as $resolver) {
-            // If class is FQN string and is not empty we will check if
-            // class implements required ProviderInterface.
-            // If case is false we will throw \Exception and break iteration.
-            $resolvedClass = (new $resolver())->resolve($url);
-            if (is_string($resolvedClass) && !empty($resolvedClass)) {
-                if (!in_array(ProviderInterface::class,
-                    array_keys(class_implements($resolvedClass))))
-                {
-                    throw new \Exception(
-                        'Class: ' .$resolvedClass. ' is found but it does not implement ' . ProviderInterface::class);
-                }
 
-                // Everything is fine we can instantiate new Provider object,
-                // pass required data to the same and break Resolver search iteration.
+            // If class is FQN string and is not empty we will check if
+            // class implements required resolve method.
+            // If case is false we will throw \Exception and break iteration.
+            $resolver = new $resolver();
+            if (!method_exists($resolver, 'resolve')) {
+                throw new \Exception(
+                    'Resolver class: ' .get_class($resolver). ' is found but it does not implement resolve method.'
+                );
+            }
+
+            // Everything is fine we can instantiate new Provider object,
+            // pass required data to the same and break Resolver search iteration.
+            $resolvedClass = $resolver->resolve($url);
+            if (is_string($resolvedClass) && !empty($resolvedClass)) {
                 return new $resolvedClass($url, $config);
                 break;
             }
@@ -107,6 +108,19 @@ class Factory implements FactoryInterface
      */
     public function registerResolver($resolverClass)
     {
+        $this->resolvers[] = $resolverClass;
+        return $this;
+    }
+
+    /**
+     * Method setResolver used to empty resolvers property and set passed resolver as the only one.
+     *
+     * @param $resolverClass
+     * @return \Cubes\Media\Factory
+     */
+    public function setResolver($resolverClass)
+    {
+        unset($this->resolvers);
         $this->resolvers[] = $resolverClass;
         return $this;
     }

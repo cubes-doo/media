@@ -57,18 +57,19 @@ trait IdentifierTrait
     {
         // If trait is used in parent class that already implements
         // magic method __call we will call parent's magic method.
-        if (is_callable('parent', '__call')) {
+        if (is_callable('parent::__call')) {
             return parent::__call($name, $args);
         }
 
         // If undefined method is called we will try to identify if
         // some of property assigned method is called and we will call
         // isUrlTypeOf with passed arguments.
-        if (in_array(strtolower($name), self::$undefinedAllowedMethods)) {
+        $name = strtolower($name);
+        if (in_array($name, self::$undefinedAllowedMethods)) {
             if (strpos($name, Factory::TYPE_YOUTUBE) !== false) {
-                return $this->isUrlTypeOf(Factory::TYPE_YOUTUBE, $args);
+                return $this->isUrlTypeOf(Factory::TYPE_YOUTUBE, $args[0]);
             } elseif (strpos($name, Factory::TYPE_VIMEO) !== false) {
-                return $this->isUrlTypeOf(Factory::TYPE_VIMEO, $args);
+                return $this->isUrlTypeOf(Factory::TYPE_VIMEO, $args[0]);
             }
         }
     }
