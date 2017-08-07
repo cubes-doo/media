@@ -41,11 +41,11 @@ class Vimeo extends AbstractMedia implements ProviderInterface
      */
     public function __construct($url, array $config)
     {
-        $this->url = $this->normalizeUrl($url);
+        $this->url = $url;
+        $this->setVideoId();
         $this->setConfig($config);
         $this->init();
         $this->data = $this->getAll();
-        $this->setVideoId();
     }
 
     /**
@@ -58,8 +58,11 @@ class Vimeo extends AbstractMedia implements ProviderInterface
     {
         $config = $this->getConfig();
         $this->service = new \Vimeo\Vimeo(
-            $config['client_id'], $config['client_secret']
+            $config->vimeo->client_id, $config->vimeo->client_secret
         );
+
+        $token = $this->service->clientCredentials();
+        $this->service->setToken($token['body']['access_token']);
     }
 
     /**
@@ -69,8 +72,8 @@ class Vimeo extends AbstractMedia implements ProviderInterface
      */
     public function getAll()
     {
-        $data = unserialize(file_get_contents($this->url));
-        return $this->rebuildData($data[0]);
+        $data = $this->service->request('/videos/'.$this->getVideoId())['body'];
+        return $this->rebuildData($data);
     }
 
     /**
@@ -102,16 +105,16 @@ class Vimeo extends AbstractMedia implements ProviderInterface
 
         // Rebuild array to corresponding format.
         $rebuiltedData = [
-            'id' => $data['id'],
-            'thumbnail' => $data['thumbnail_large'],
-            'thumbnailSize' => '',
-            'authorName' => $data['user_name'],
-            'authorChannelUrl' => $data['user_url'],
-            'title' => $data['title'],
+            'id' => $this->getVideoId(),
+            'thumbnail' => $data['pictures']['sizes'][3]['link'],
+            'thumbnailSize' => $data['pictures']['sizes'][3],
+            'authorName' => $data['user']['name'],
+            'authorChannelUrl' => $data['user']['link'],
+            'title' => $data['name'],
             'description' => $data['description'],
-            'iframe' => '',
+            'iframe' => $data['embed']['html'],
             'iframeSize' => '',
-            'tags' => ''
+            'tags' => $data['tags']
         ];
 
         // Return rebuilted data.
@@ -220,7 +223,7 @@ class Vimeo extends AbstractMedia implements ProviderInterface
      */
     public function setVideoId()
     {
-        $this->video_id = $this->data['id'];
+        $this->video_id = (int) substr(parse_url($this->url, PHP_URL_PATH), 1);
     }
 
     /**
@@ -231,21 +234,5 @@ class Vimeo extends AbstractMedia implements ProviderInterface
     public function getVideoId()
     {
         return $this->video_id;
-    }
-
-    /**
-     * Method used to normalize last character of url if not exist.
-     *
-     * @param  $url
-     * @return string
-     */
-    private function normalizeUrl($url)
-    {
-        if (substr($url, -1) == '/') {
-            $url = rtrim($url, '/');
-        }
-
-        $normalizedUrl = str_replace('https://vimeo.com/', 'http://vimeo.com/api/v2/video/', $url) . '.php';
-        return $normalizedUrl;
     }
 }

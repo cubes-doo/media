@@ -17,7 +17,7 @@ class Config implements \ArrayAccess, \Countable
     protected $parameters;
 
     /**
-     * Number of elements in configuration data
+     * Number of elements in configuration data.
      *
      * @var integer
      */
