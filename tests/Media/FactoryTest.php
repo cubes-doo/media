@@ -24,10 +24,13 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->factory = Factory::getInstance();
-        $this->collection['url'] = 'https://www.youtube.com/watch?v=uncVbYGOJ8c';
-        $this->collection['config'] = [
-            'api_key' => 'AIzaSyCh8O9l9QJJ62D2RfKaUUHycAebXn8_-us'
+        $this->collection = [
+            'youtube' => [
+                'api_key' => 'AIzaSyCh8O9l9QJJ62D2RfKaUUHycAebXn8_-us'
+            ]
         ];
+
+        $this->collection['url'] = 'https://www.youtube.com/watch?v=uncVbYGOJ8c';
     }
 
     public function testFactoryImplementsFactoryInterface()
@@ -39,7 +42,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(ProviderInterface::class,
             $this->factory->create(
-                $this->collection['url'], $this->collection['config']
+                $this->collection['url'], $this->collection
             )
         );
     }
@@ -48,7 +51,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(\Exception::class);
         $this->factory->registerResolver(ResolverStub::class)->create(
-            $this->collection['url'], $this->collection['config']
+            $this->collection['url'], $this->collection
         );
     }
 

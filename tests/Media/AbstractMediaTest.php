@@ -6,67 +6,68 @@ use Cubes\Media\AbstractMedia;
 
 class AbstractMediaTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp(){}
+    /* @var $media \Cubes\Media\AbstractMedia|\PHPUnit_Framework_MockObject_MockObject */
+    protected $media;
+
+    public function setUp()
+    {
+        $media = $this->getMockBuilder(AbstractMedia::class)
+            ->getMockForAbstractClass();
+        self::getMethod('setConfig')->invokeArgs($media, [[
+            'youtube' => [
+                'api_key' => 'AIzaSyCh8O9l9QJJ62D2RfKaUUHycAebXn8_-us'
+            ]
+        ]]);
+        self::getProperty('data')->setValue($media, [
+            'id' => '',
+            'thumbnail' => '',
+            'thumbnailSize' => '',
+            'authorName' => '',
+            'authorChannelUrl' => '',
+            'title' => '',
+            'description' => '',
+            'iframe' => '',
+            'iframeSize' => '',
+            'tags'  => ''
+        ]);
+
+        $this->media = $media;
+    }
+
     public function tearDown(){}
 
     public function testConfigIsSet()
     {
-        /* @var $media \Cubes\Media\AbstractMedia|\PHPUnit_Framework_MockObject_MockObject */
-        $media = $this
-            ->getMockBuilder(AbstractMedia::class)
-            ->getMockForAbstractClass();
-
-        self::getMethod('setConfig')->invokeArgs($media, [['api_key' => 'random']]);
         $this->assertNotEmpty(
-            self::getMethod('getConfig')->invokeArgs($media, [])
+            self::getMethod('getConfig')->invokeArgs($this->media, [])
         );
     }
 
     public function testToJsonReturnsJson()
     {
-        /* @var $media \Cubes\Media\AbstractMedia|\PHPUnit_Framework_MockObject_MockObject */
-        $media = $this
-            ->getMockBuilder(AbstractMedia::class)
-            ->getMockForAbstractClass();
-
-        $this->assertTrue(self::getMethod('isJson')->invokeArgs($media, [
-            $media->toJson()
+        $this->assertTrue(self::getMethod('isJson')->invokeArgs($this->media, [
+            $this->media->toJson()
         ]));
     }
 
     public function testToArrayReturnsArray()
     {
-        /* @var $media \Cubes\Media\AbstractMedia|\PHPUnit_Framework_MockObject_MockObject */
-        $media = $this
-            ->getMockBuilder(AbstractMedia::class)
-            ->getMockForAbstractClass();
-
         $this->assertTrue(is_array(
-            self::getMethod('toArray')->invokeArgs($media, [
-                $media->toJson()
+            self::getMethod('toArray')->invokeArgs($this->media, [
+                $this->media->toJson()
             ])
         ));
     }
 
     public function testJsonSerializableInterfaceMethodMakesSerializationInGivenFormat()
     {
-        /* @var $media \Cubes\Media\AbstractMedia|\PHPUnit_Framework_MockObject_MockObject */
-        $media = $this
-            ->getMockBuilder(AbstractMedia::class)
-            ->getMockForAbstractClass();
-
-        $result = json_encode($media);
+        $result = json_encode($this->media);
         $this->assertArrayHasKey('data', json_decode($result, true));
     }
 
     public function testIsObjectCountable()
     {
-        /* @var $media \Cubes\Media\AbstractMedia|\PHPUnit_Framework_MockObject_MockObject */
-        $media = $this
-            ->getMockBuilder(AbstractMedia::class)
-            ->getMockForAbstractClass();
-
-        $result = count($media);
+        $result = count($this->media);
         $this->assertTrue($result > 1);
     }
 

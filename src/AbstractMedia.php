@@ -41,7 +41,7 @@ abstract class AbstractMedia implements \JsonSerializable, \ArrayAccess, \Counta
     /**
      * Array of provider API access parameters.
      *
-     * @var array
+     * @var \Cubes\Media\Config $config
      */
     protected $config = [];
 
@@ -55,21 +55,21 @@ abstract class AbstractMedia implements \JsonSerializable, \ArrayAccess, \Counta
     /**
      * Method used to bind config parameters to config property.
      *
-     * @param  array $config
+     * @param  array $parameters
      * @return $this
      */
-    protected function setConfig(array $config)
+    protected function setConfig(array $parameters)
     {
-        $this->config = $config;
+        $this->config = new Config($parameters);
         return $this;
     }
 
     /**
      * Returns array of config parameters.
      *
-     * @return array
+     * @return \Cubes\Media\Config
      */
-    protected function getConfig()
+    public function getConfig()
     {
         return $this->config;
     }
@@ -250,5 +250,4 @@ abstract class AbstractMedia implements \JsonSerializable, \ArrayAccess, \Counta
     {
         return json_encode($this->data, JSON_UNESCAPED_SLASHES);
     }
-
 }

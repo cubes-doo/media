@@ -58,7 +58,7 @@ class Youtube extends AbstractMedia implements ProviderInterface
     protected function init()
     {
         $client = new \Google_Client();
-        $client->setDeveloperKey($this->config['api_key']);
+        $client->setDeveloperKey($this->config->youtube->api_key);
         $this->service = new \Google_Service_YouTube($client);
     }
 
