@@ -12,8 +12,40 @@ use Cubes\Media\Providers\Resolver;
  *
  * @package Cubes\Media
  */
-class Factory implements FactoryInterface
+class Factory
 {
+    /**
+     * Constant YOUTUBE_IDENTIFIERS used as identifier for code logic.
+     */
+    const YOUTUBE_IDENTIFIERS = ['youtube', 'youtu.be', 'y2u.be'];
+    /**
+     * Constant TYPE_YOUTUBE used as identifier for code logic.
+     */
+    const TYPE_YOUTUBE = 'youtube';
+
+    /**
+     * Constant TYPE_VIMEO used as identifier for code logic.
+     */
+    const TYPE_VIMEO   = 'vimeo';
+
+    /**
+     * Constant YOUTUBE_RGX used as youtube allowed regex pattern for youtube url.
+     */
+    const YOUTUBE_RGX  = '~^(?:https?://)?(?:www[.])?(?:youtube[.]com/watch[?]v=|youtu[.]be/)([^&]{11})~x';
+
+    /**
+     * Constant VIMEO_RGX used as vimeo allowed regex pattern for youtube url.
+     */
+    const VIMEO_RGX    = '/https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/'.
+                         ']*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/';
+
+    /**
+     * Constant URL_RGX used as vimeo allowed regex pattern for youtube url.
+     */
+    const URL_RGX      = '((https?|ftp)\:\/\/)?([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?'.
+                         '([a-z0-9-.]*)\.([a-z]{2,3})(\:[0-9]{2,5})?(\/([a-z0-9+\$_-]\.?)+)*\/?(\?[a-z+&\$'.
+                         '_.-][a-z0-9;:@&%=+\/\$_.-]*)?(#[a-z_.-][a-z0-9+\$_.-]*)?';
+    
     /**
      * Resolver property
      *
@@ -70,23 +102,10 @@ class Factory implements FactoryInterface
         // and try to resolve Provider class.
         foreach ($this->getResolvers() as $resolver) {
 
-            // If class is FQN string and is not empty we will check if
-            // class implements required resolve method.
-            // If case is false we will throw \Exception and break iteration.
             $resolver = new $resolver();
-            if (!method_exists($resolver, 'resolve')) {
-                throw new \Exception(
-                    'Resolver class: ' .get_class($resolver). ' is found but it does not implement resolve method.'
-                );
-            }
 
-            // Everything is fine we can instantiate new Provider object,
-            // pass required data to the same and break Resolver search iteration.
-            $resolvedClass = $resolver->resolve($url);
-            if (is_string($resolvedClass) && !empty($resolvedClass)) {
-                return new $resolvedClass($url, $config);
-                break;
-            }
+            $resolvedClass = $resolver->resolve($url, $config);
+            return $resolvedClass;
         }
     }
 
@@ -106,7 +125,7 @@ class Factory implements FactoryInterface
      * @param $resolverClass
      * @return \Cubes\Media\Factory
      */
-    public function registerResolver($resolverClass)
+    public function registerResolver(ResolverInterface $resolverClass)
     {
         $this->resolvers[] = $resolverClass;
         return $this;
@@ -118,7 +137,7 @@ class Factory implements FactoryInterface
      * @param $resolverClass
      * @return \Cubes\Media\Factory
      */
-    public function setResolver($resolverClass)
+    public function setResolver(ResolverInterface $resolverClass)
     {
         unset($this->resolvers);
         $this->resolvers[] = $resolverClass;

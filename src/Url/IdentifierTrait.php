@@ -11,71 +11,76 @@ use Cubes\Media\Factory;
  * Class IdentifierTrait
  *
  * Identifier trait used in Factory and Providers.
- * Can be also used standalone in controllers, models...
- *
- * @method isVimeo(string $url)
- * @method isYoutube(string $url)
- * @method isUrlVimeo(string $url)
- * @method isUrlYoutube(string $url)
- * @method isYoutubeUrl(string $url)
- * @method isVimeoUrl(string $url)
+ * Can be also used on in controllers, models...
  *
  * @package Cubes\Media\Url
  */
 trait IdentifierTrait
 {
     /**
-     * Array of undefined but allowed methods to be called with help of magic method __call.
-     *
-     * @var array
-     */
-    protected static $undefinedAllowedMethods = [
-        'isurltypeof',
-        'isvimeo',
-        'isyoutube',
-        'isurlvimeo',
-        'isurlyoutube',
-        'isyoutubeurl',
-        'isvimeourl',
-    ];
-
-    /**
-     * Array of allowed url types.
-     *
+     * Array of allowed URL types.
+     * Youtube has two types of acknowledged shortened URLs.
+     * Vimeo URLs are already pretty short, hence the  do not need shortening.
      * @var array
      */
     protected static $allowedUrlTypes = [
-        'youtube', 'vimeo'
+        'vimeo',
+        'youtube',
+        
+        'youtu.be',
+        'y2u.be'
     ];
-
+    
     /**
-     * @param  $name
-     * @param  $args
-     * @return mixed
+     * Method used to identify if a given URL came from Youtube.
+     * 
+     * @param string $url
+     * @return boolean
      */
-    public function __call($name, $args)
+    public function isYoutube($url) 
     {
-        // If trait is used in parent class that already implements
-        // magic method __call we will call parent's magic method.
-        if (is_callable('parent::__call')) {
-            return parent::__call($name, $args);
-        }
-
-        // If undefined method is called we will try to identify if
-        // some of property assigned method is called and we will call
-        // isUrlTypeOf with passed arguments.
-        $name = strtolower($name);
-        if (in_array($name, self::$undefinedAllowedMethods)) {
-            if (strpos($name, Factory::TYPE_YOUTUBE) !== false) {
-                return $this->isUrlTypeOf(Factory::TYPE_YOUTUBE, $args[0]);
-            } elseif (strpos($name, Factory::TYPE_VIMEO) !== false) {
-                return $this->isUrlTypeOf(Factory::TYPE_VIMEO, $args[0]);
+        return $this->isUrlTypeOf(Factory::TYPE_YOUTUBE, $url);
+    }
+    
+    /**
+     * Method used to identify if a given URL came from Vimeo.
+     * 
+     * @param string $url
+     * @return boolean
+     */
+    public function isVimeo($url) 
+    {
+        return $this->isUrlTypeOf(Factory::TYPE_VIMEO, $url);
+    }
+    
+    /**
+     *  Method used when there is more than one possibility to check against,
+     *  i.e. when needles are in an array.
+     * 
+     * @param string $haystack
+     * @param mixed $needles
+     * @return boolean
+     */
+    private function strpos_array($haystack, $needles) 
+    {
+        if ( is_array($needles) ) {
+            foreach ($needles as $str) {
+                if ( is_array($str) ) {
+                    $pos = strpos_array($haystack, $str);
+                } else {
+                    $pos = strpos($haystack, $str);
+                }
+                if ($pos !== false) {
+                    return $pos;
+                }
             }
+        } else {
+            return strpos($haystack, $needles);
         }
     }
-
+    
     /**
-     * Method identify used to identify what type of url is (Youtube, Vimeo).
+     * Method identify used to identify the type of URL (Youtube or Vimeo currently).
      *
      * @param  string $url
      *
@@ -85,12 +90,12 @@ trait IdentifierTrait
      */
     public function identify($url)
     {
-        if (strpos($url, Factory::TYPE_YOUTUBE) !== false) {
+        if ($this->strpos_array($url, Factory::YOUTUBE_IDENTIFIERS) !== false) {
             preg_match(Factory::YOUTUBE_RGX, $url, $matches);
             if (!empty($matches)) {
                 return Factory::TYPE_YOUTUBE;
             }
-        } elseif (strpos($url, Factory::TYPE_VIMEO) !== false) {
+        } elseif ($this->strpos_array($url, Factory::TYPE_VIMEO) !== false) {
             preg_match(Factory::VIMEO_RGX, $url, $matches);
             if (!empty($matches)) {
                 return Factory::TYPE_VIMEO;
@@ -116,12 +121,12 @@ trait IdentifierTrait
      */
     private function isUrlTypeOf($type, $url)
     {
-        // Throw exception if type parameter is empty because we can't work without the same.
+        // Throw exception if type parameter is empty because we can't work without it.
         if (empty($type)) {
             throw new RequiredUrlParameterException('type', 'isUrlTypeOf');
         }
 
-        // Throw exception it url parameter is empty or not passed because we can't work without the same.
+        // Throw exception it url parameter is empty or not passed because we can't work without it.
         if (empty($url)) {
             throw new RequiredUrlParameterException('url', 'isUrlTypeOf');
         }

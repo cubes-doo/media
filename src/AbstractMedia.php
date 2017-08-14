@@ -4,6 +4,7 @@ namespace Cubes\Media;
 
 use Cubes\Media\Serializers\Arrayable;
 use Cubes\Media\Serializers\Jsonable;
+use Cubes\Media\Providers\ProviderInterface;
 
 /**
  * Class AbstractMedia
@@ -12,7 +13,7 @@ use Cubes\Media\Serializers\Jsonable;
  *
  * @package Cubes\Media
  */
-abstract class AbstractMedia implements \JsonSerializable, \ArrayAccess, \Countable, Arrayable, Jsonable
+abstract class AbstractMedia implements \JsonSerializable, \ArrayAccess, \Countable, Arrayable, Jsonable, ProviderInterface
 {
     /**
      * @var array $media
@@ -250,4 +251,106 @@ abstract class AbstractMedia implements \JsonSerializable, \ArrayAccess, \Counta
     {
         return json_encode($this->data, JSON_UNESCAPED_SLASHES);
     }
+    
+    /**
+     * Sets iframe size so you can then call getIframe with dynamic width and height.
+     *
+     * @param  array|string $size
+     * @return string
+     */
+    public function setIframeSize($size)
+    {
+        // TODO: Implement logic.
+        return 'Not implemented yet.';
+    }
+    
+    /**
+     * Returns author name.
+     *
+     * @return string
+     */
+    public function getAuthorName()
+    {
+        return $this->data['authorName'];
+    }
+
+    /**
+     * Returns author channel url.
+     *
+     * @return string
+     */
+    public function getAuthorChannelUrl()
+    {
+        return $this->data['authorChannelUrl'];
+    }
+
+    /**
+     * Returns thumbnail url.
+     *
+     * @return string
+     */
+    public function getThumbnail()
+    {
+        return $this->data['thumbnail'];
+    }
+
+    /**
+     * Returns size of thumbnail from data.
+     *
+     * @return string
+     */
+    public function getThumbnailSize()
+    {
+        return $this->data['thumbnailSize'];
+    }
+
+    /**
+     * Returns title of video.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->data['title'];
+    }
+
+    /**
+     * Returns description of video.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->data['description'];
+    }
+    /**
+     * Returns iframe html data.
+     *
+     * @return string
+     */
+    public function getIframe()
+    {
+        return $this->data['iframe'];
+    }
+    
+    /**
+     * Returns array of video tags.
+     *
+     * @return mixed
+     */
+    public function getTags()
+    {
+        return $this->data['tags'];
+    }
+    
+    /**
+     * Method getVideoId used to fetch video id from parsed url.
+     *
+     * @return mixed
+     */
+    public function getVideoId()
+    {
+        return $this->video_id;
+    }
+    
 }

@@ -122,117 +122,12 @@ class Vimeo extends AbstractMedia implements ProviderInterface
     }
 
     /**
-     * Returns video author name.
-     *
-     * @return mixed
-     */
-    public function getAuthorName()
-    {
-        return $this->data['authorName'];
-    }
-
-    /**
-     * Returns author channel url.
-     *
-     * @return string
-     */
-    public function getAuthorChannelUrl()
-    {
-        return $this->data['authorChannelUrl'];
-    }
-
-    /**
-     * Returns thumbnail url.
-     *
-     * @return string
-     */
-    public function getThumbnail()
-    {
-        return $this->data['thumbnail'];
-    }
-
-    /**
-     * Returns size of thumbnail from data.
-     *
-     * @return string
-     */
-    public function getThumbnailSize()
-    {
-        // TODO: Implement logic.
-        return 'Not implemented yet for Vimeo provider.';
-    }
-
-    /**
-     * Returns title of video.
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->data['title'];
-    }
-
-    /**
-     * Returns description of video.
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->data['description'];
-    }
-
-    /**
-     * Returns iframe of video in html format.
-     *
-     * @return string
-     */
-    public function getIframe()
-    {
-        // TODO: Implement logic.
-        return 'Not implemented yet for Vimeo provider.';
-    }
-
-    /**
-     * Sets iframe size so you can then call getIframe with dynamic width and height.
-     *
-     * @param  array|string $size
-     * @return string
-     */
-    public function setIframeSize($size)
-    {
-        // TODO: Implement logic.
-        return 'Not implemented yet for Vimeo provider.';
-    }
-
-    /**
-     * Returns array of video tags.
-     *
-     * @return mixed
-     */
-    public function getTags()
-    {
-        // TODO: Implement logic.
-        return 'Not implemented yet for Vimeo provider.';
-    }
-
-    /**
-     * Method setVideoId used to set video_id property from vimeo url parsed.
+     * Method setVideoId used to set video_id property from the parsed vimeo URl.
      *
      * @return $this
      */
     public function setVideoId()
     {
         $this->video_id = (int) substr(parse_url($this->url, PHP_URL_PATH), 1);
-    }
-
-    /**
-     * Method getVideoId used to fetch video id from parsed url.
-     *
-     * @return mixed
-     */
-    public function getVideoId()
-    {
-        return $this->video_id;
     }
 }

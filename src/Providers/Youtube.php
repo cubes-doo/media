@@ -121,98 +121,7 @@ class Youtube extends AbstractMedia implements ProviderInterface
     }
 
     /**
-     * Returns author name.
-     *
-     * @return string
-     */
-    public function getAuthorName()
-    {
-        return $this->data['authorName'];
-    }
-
-    /**
-     * Returns author channel url.
-     *
-     * @return string
-     */
-    public function getAuthorChannelUrl()
-    {
-        return $this->data['authorChannelUrl'];
-    }
-
-    /**
-     * Returns thumbnail url.
-     *
-     * @return string
-     */
-    public function getThumbnail()
-    {
-        return $this->data['thumbnail'];
-    }
-
-    /**
-     * Returns size of thumbnail from data.
-     *
-     * @return string
-     */
-    public function getThumbnailSize()
-    {
-        return $this->data['thumbnailSize'];
-    }
-
-    /**
-     * Returns title of video.
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->data['title'];
-    }
-
-    /**
-     * Returns description of video.
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->data['description'];
-    }
-    /**
-     * Returns iframe html data.
-     *
-     * @return string
-     */
-    public function getIframe()
-    {
-        return $this->data['iframe'];
-    }
-
-    /**
-     * Sets iframe size so you can then call getIframe with dynamic width and height.
-     *
-     * @param  array|string $size
-     * @return string
-     */
-    public function setIframeSize($size)
-    {
-        // TODO: Finish implementation.
-        return 'Not yet implemented for youtube Provider.';
-    }
-
-    /**
-     * Returns array of video tags.
-     *
-     * @return mixed
-     */
-    public function getTags()
-    {
-        return $this->data['tags'];
-    }
-
-    /**
-     * Method setVideoId used to parse video url and fetch id from the same.
+     * Method setVideoId used to parse video url and fetch id from it.
      *
      * @param  string $url
      * @return $this
@@ -222,17 +131,7 @@ class Youtube extends AbstractMedia implements ProviderInterface
         parse_str(parse_url($url, PHP_URL_QUERY), $output);
         return $this->video_id = $output['v'];
     }
-
-    /**
-     * Method getVideoId used to fetch video id from parsed url.
-     *
-     * @return mixed
-     */
-    public function getVideoId()
-    {
-        return $this->video_id;
-    }
-
+    
     /**
      * Method getVideoMetadata used to fetch metadata for specific video id.
      *

@@ -12,7 +12,7 @@ use Cubes\Media\Url\ValidatorTrait;
  *
  * @package Cubes\Media\Providers
  */
-class Resolver
+class Resolver implements ResolverInterface
 {
     use IdentifierTrait,
         ValidatorTrait;
@@ -27,7 +27,7 @@ class Resolver
      *
      * @return string
      */
-    public function resolve($url)
+    public function resolve($url, array $config)
     {
         if (!$this->isUrlValid($url)) {
             throw new InvalidUrlException('Provided url: ' .$url. ' is not valid.');
@@ -37,12 +37,12 @@ class Resolver
         if (!class_exists($class)) {
             throw new ProviderClassNotFoundException('Provider class: ' .$class. ' not found.');
         }
-
-        return $class;
+        
+        return new $class($url, $config);
     }
 
     /**
-     * Method getClass used to get Vimeo or Youtube class from url if identified.
+     * Method getClass used to get Vimeo or Youtube class from URL if identified.
      *
      * @param  $url
      * @return string
