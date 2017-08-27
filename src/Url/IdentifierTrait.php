@@ -26,7 +26,6 @@ trait IdentifierTrait
     protected static $allowedUrlTypes = [
         'vimeo',
         'youtube',
-        
         'youtu.be',
         'y2u.be'
     ];
@@ -51,32 +50,6 @@ trait IdentifierTrait
     public function isVimeo($url) 
     {
         return $this->isUrlTypeOf(Factory::TYPE_VIMEO, $url);
-    }
-    
-    /**
-     *  Method used when there is more than one possibility to check against,
-     *  i.e. when needles are in an array.
-     * 
-     * @param string $haystack
-     * @param mixed $needles
-     * @return boolean
-     */
-    private function strpos_array($haystack, $needles) 
-    {
-        if ( is_array($needles) ) {
-            foreach ($needles as $str) {
-                if ( is_array($str) ) {
-                    $pos = strpos_array($haystack, $str);
-                } else {
-                    $pos = strpos($haystack, $str);
-                }
-                if ($pos !== false) {
-                    return $pos;
-                }
-            }
-        } else {
-            return strpos($haystack, $needles);
-        }
     }
     
     /**
@@ -148,5 +121,31 @@ trait IdentifierTrait
 
         // Return false otherwise.
         return false;
+    }
+
+    /**
+     *  Method used when there is more than one possibility to check against,
+     *  i.e. when needles are in an array.
+     *
+     * @param  string  $haystack
+     * @param  mixed   $needles
+     * @return boolean
+     */
+    private function strposArray($haystack, $needles)
+    {
+        if ( is_array($needles) ) {
+            foreach ($needles as $str) {
+                if ( is_array($str) ) {
+                    $pos = $this->strposArray($haystack, $str);
+                } else {
+                    $pos = strpos($haystack, $str);
+                }
+                if ($pos !== false) {
+                    return $pos;
+                }
+            }
+        } else {
+            return strpos($haystack, $needles);
+        }
     }
 }

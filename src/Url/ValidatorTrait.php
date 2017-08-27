@@ -11,7 +11,6 @@ use Cubes\Media\Factory;
  */
 trait ValidatorTrait
 {
-
     /**
      * Method isUrlValid checks if provided url is valid address.
      *
@@ -29,5 +28,4 @@ trait ValidatorTrait
 
         return false;
     }
-
 }
