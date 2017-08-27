@@ -63,12 +63,12 @@ trait IdentifierTrait
      */
     public function identify($url)
     {
-        if ($this->strpos_array($url, Factory::YOUTUBE_IDENTIFIERS) !== false) {
+        if ($this->strposArray($url, Factory::YOUTUBE_IDENTIFIERS) !== false) {
             preg_match(Factory::YOUTUBE_RGX, $url, $matches);
             if (!empty($matches)) {
                 return Factory::TYPE_YOUTUBE;
             }
-        } elseif ($this->strpos_array($url, Factory::TYPE_VIMEO) !== false) {
+        } elseif ($this->strposArray($url, Factory::TYPE_VIMEO) !== false) {
             preg_match(Factory::VIMEO_RGX, $url, $matches);
             if (!empty($matches)) {
                 return Factory::TYPE_VIMEO;
